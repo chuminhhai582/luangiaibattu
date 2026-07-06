@@ -1,0 +1,8 @@
+[
+  { "code": "HN",  "name": "Hà Nội",   "longitude": 105.85, "region_1954_1975": "north" },
+  { "code": "SG",  "name": "TP.HCM",   "longitude": 106.70, "region_1954_1975": "south" },
+  { "code": "DB",  "name": "Điện Biên","longitude": 103.02, "region_1954_1975": "north" },
+  { "code": "HP",  "name": "Hải Phòng","longitude": 106.68, "region_1954_1975": "north" },
+  { "code": "DN",  "name": "Đà Nẵng",  "longitude": 108.20, "region_1954_1975": "south" },
+  { "code": "CT",  "name": "Cần Thơ",  "longitude": 105.78, "region_1954_1975": "south" }
+]

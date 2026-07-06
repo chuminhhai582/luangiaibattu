@@ -1,0 +1,10 @@
+[
+  { "region": "all",   "from": "1906-07-01", "to": "1911-04-30", "utc_offset": "+07:06:40", "note": "Giờ Đông Dương theo kinh tuyến Phù Liễn" },
+  { "region": "all",   "from": "1911-05-01", "to": "1942-12-31", "utc_offset": "+07:00" },
+  { "region": "all",   "from": "1943-01-01", "to": "1945-09-01", "utc_offset": "+08:00", "note": "Thời Nhật chiếm đóng" },
+  { "region": "all",   "from": "1945-09-02", "to": "1947-03-31", "utc_offset": "+07:00" },
+  { "region": "north", "from": "1947-04-01", "to": "9999-12-31", "utc_offset": "+07:00" },
+  { "region": "south", "from": "1947-04-01", "to": "1959-12-31", "utc_offset": "+07:00" },
+  { "region": "south", "from": "1960-01-01", "to": "1975-06-12", "utc_offset": "+08:00", "note": "VNCH dùng GMT+8" },
+  { "region": "south", "from": "1975-06-13", "to": "9999-12-31", "utc_offset": "+07:00" }
+]

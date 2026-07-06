@@ -1,0 +1,8 @@
+{
+  "de_lenh":  { "weight": 0.4, "desc": "Nhật chủ được lệnh tháng sinh/trợ (trạng thái trường sinh tại nguyệt lệnh)" },
+  "de_dia":   { "weight": 0.3, "desc": "Thông căn tại các chi (tàng can cùng hành nhật chủ)" },
+  "de_the":   { "weight": 0.3, "desc": "Số can chi sinh/trợ nhật chủ trên toàn cục" },
+  "labels":   [ {"min": 0.7, "label": "vượng"}, {"min": 0.55, "label": "hơi vượng"},
+                {"min": 0.45, "label": "trung hòa"}, {"min": 0.3, "label": "hơi nhược"},
+                {"min": 0, "label": "nhược"} ]
+}

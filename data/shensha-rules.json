@@ -1,0 +1,12 @@
+[
+  { "name": "Thiên Ất quý nhân", "lookup_by": "day_gan",
+    "rules": { "Giáp": ["Sửu","Mùi"], "Mậu": ["Sửu","Mùi"], "Canh": ["Sửu","Mùi"],
+               "Ất": ["Tý","Thân"], "Kỷ": ["Tý","Thân"], "Bính": ["Hợi","Dậu"],
+               "Đinh": ["Hợi","Dậu"], "Nhâm": ["Mão","Tỵ"], "Quý": ["Mão","Tỵ"],
+               "Tân": ["Dần","Ngọ"] },
+    "match_against": ["year_zhi","month_zhi","day_zhi","hour_zhi"] },
+  { "name": "Đào hoa", "lookup_by": "day_zhi_group",
+    "rules": { "Thân-Tý-Thìn": "Dậu", "Dần-Ngọ-Tuất": "Mão",
+               "Tỵ-Dậu-Sửu": "Ngọ", "Hợi-Mão-Mùi": "Tý" },
+    "match_against": ["year_zhi","month_zhi","day_zhi","hour_zhi"] }
+]

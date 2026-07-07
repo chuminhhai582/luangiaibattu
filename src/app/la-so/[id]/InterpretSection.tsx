@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useCompletion } from "ai/react";
+import { useCompletion } from "@ai-sdk/react";
 
 export default function InterpretSection({ chartId }: { chartId: string }) {
   const [loadingFree, setLoadingFree] = useState(false);

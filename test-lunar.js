@@ -1,16 +1,15 @@
 const { Solar, Lunar } = require('lunar-typescript');
 
 const solar = Solar.fromYmdHms(2000, 11, 14, 3, 30, 0);
-try {
-  console.log("solar.getEightChar:", typeof solar.getEightChar);
-} catch (e) {
-  console.log("solar error:", e.message);
-}
+const lunar = solar.getLunar();
+const eightChar = lunar.getEightChar();
+const yun = eightChar.getYun(1);
 
-try {
-  const lunar = solar.getLunar();
-  console.log("lunar.getEightChar:", typeof lunar.getEightChar);
-  console.log("eight char:", lunar.getEightChar().getYearGan());
-} catch (e) {
-  console.log("lunar error:", e.message);
-}
+console.log("Yun keys:", Object.keys(yun).concat(Object.getOwnPropertyNames(Object.getPrototypeOf(yun))));
+console.log("yun.getStartYear():", yun.getStartYear());
+console.log("yun.getStartSolar():", yun.getStartSolar().toYmd());
+
+const daYuns = yun.getDaYun();
+const firstDaYun = daYuns[0];
+console.log("DaYun keys:", Object.keys(firstDaYun).concat(Object.getOwnPropertyNames(Object.getPrototypeOf(firstDaYun))));
+

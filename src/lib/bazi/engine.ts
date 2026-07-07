@@ -83,8 +83,8 @@ export function buildChart(input: {
   
   const da_yun = {
     direction: yun.isForward() ? "thuận" : "nghịch" as "thuận" | "nghịch",
-    start_age: yun.getStartAge(),
-    start_year: yun.getStartSolarYear(),
+    start_age: daYunList.length > 0 ? daYunList[0].getStartAge() : 0,
+    start_year: daYunList.length > 0 ? daYunList[0].getStartYear() : 0,
     list: daYunList.slice(0, 10).map(dy => ({
       index: dy.getIndex(),
       gan_zhi: dy.getGanZhi(),

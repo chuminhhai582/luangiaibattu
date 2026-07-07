@@ -2,14 +2,43 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useCompletion } from "@ai-sdk/react";
-import { Lock, Sparkles, CheckCircle2, ChevronDown, Download } from "lucide-react";
+import { Lock, Sparkles, Download, Share2, Star, ChevronDown, Briefcase, Heart, HeartPulse, Brain, Coins } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import PaywallCard from "@/components/PaywallCard";
+
+const SECTION_ICONS: Record<string, any> = {
+  "tính cách": Brain,
+  "sự nghiệp": Briefcase,
+  "tài lộc": Coins,
+  "hôn nhân": Heart,
+  "sức khỏe": HeartPulse,
+};
+
+function ShimmerSkeleton() {
+  return (
+    <div className="space-y-3">
+      {[1, 2, 3, 4].map((i) => (
+        <div
+          key={i}
+          className="h-4 rounded-md animate-shimmer"
+          style={{
+            width: `${85 - i * 10}%`,
+            backgroundImage: "linear-gradient(90deg, hsl(var(--muted)) 25%, hsl(var(--muted-foreground) / 0.08) 50%, hsl(var(--muted)) 75%)",
+            backgroundSize: "200% 100%",
+          }}
+        />
+      ))}
+    </div>
+  );
+}
 
 export default function InterpretSection({ chartId }: { chartId: string }) {
   const [hasPaid, setHasPaid] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
+  const [expandedSection, setExpandedSection] = useState<string | null>(null);
+  const [rating, setRating] = useState(0);
 
   const { completion, isLoading, complete } = useCompletion({
     api: "/api/interpret",
@@ -18,12 +47,10 @@ export default function InterpretSection({ chartId }: { chartId: string }) {
 
   const handleUnlockFree = async () => {
     setShowSummary(true);
-    // In a real app, this would call step 1 & 2
     complete("summary");
   };
 
   const handlePay = () => {
-    // Mocking payment flow
     alert("Chuyển hướng đến cổng thanh toán...");
     setTimeout(() => {
       setHasPaid(true);
@@ -31,126 +58,180 @@ export default function InterpretSection({ chartId }: { chartId: string }) {
     }, 1500);
   };
 
-  return (
-    <div className="space-y-8 relative">
-      {!showSummary && !hasPaid && (
-        <div className="flex justify-center">
-          <Button 
-            size="lg" 
-            className="h-14 px-8 text-lg font-semibold bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_0_20px_rgba(251,191,36,0.3)] gap-2 transition-all hover:scale-105"
+  // ═══════ State 1: CTA Button ═══════
+  if (!showSummary && !hasPaid) {
+    return (
+      <div className="flex justify-center">
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <Button
+            size="lg"
+            className="h-14 px-8 text-base sm:text-lg font-semibold bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/25 gap-2 transition-all hover:scale-[1.02] animate-float"
             onClick={handleUnlockFree}
           >
-            <Sparkles className="w-5 h-5" /> Nhận Bình Giải Tổng Quan (Miễn Phí)
+            <Sparkles className="w-5 h-5" />
+            Nhận Bình Giải Tổng Quan (Miễn Phí)
           </Button>
+        </motion.div>
+      </div>
+    );
+  }
+
+  // ═══════ State 2: Summary + Paywall ═══════
+  if (showSummary && !hasPaid) {
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="space-y-8"
+      >
+        {/* Summary Card */}
+        <Card className="glass-card border-primary/20 noise-overlay">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base sm:text-lg flex items-center gap-2 text-primary">
+              <Sparkles className="w-4 h-4" />
+              Tổng Quan Lá Số
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {isLoading && !completion ? (
+              <ShimmerSkeleton />
+            ) : (
+              <div className="prose-bazi">
+                {completion || "Nhật chủ sinh không đắc lệnh, được một vài cát thần hỗ trợ nhưng toàn cục vẫn thiên về nhược. Dụng thần cần dùng Ấn tinh (Thủy) để sinh trợ. Hiện tại đang trong vận thiên về hỏa, cẩn trọng hao tài tốn của. Cụ thể chi tiết xin xem bản đầy đủ."}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Blur-lock preview */}
+        <div className="relative">
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/60 to-background z-10 rounded-2xl" />
+          <div className="blur-[6px] opacity-40 pointer-events-none space-y-3 p-6 glass-card">
+            <div className="h-5 bg-white/[0.06] rounded w-1/3" />
+            <div className="h-4 bg-white/[0.04] rounded w-full" />
+            <div className="h-4 bg-white/[0.04] rounded w-5/6" />
+            <div className="h-4 bg-white/[0.04] rounded w-4/5" />
+            <div className="h-5 bg-white/[0.06] rounded w-1/4 mt-4" />
+            <div className="h-4 bg-white/[0.04] rounded w-full" />
+            <div className="h-4 bg-white/[0.04] rounded w-3/4" />
+          </div>
+        </div>
+
+        {/* Paywall */}
+        <PaywallCard onPay={handlePay} />
+      </motion.div>
+    );
+  }
+
+  // ═══════ State 3: Full Content ═══════
+  const sections = [
+    { key: "tinh-cach", label: "Tính cách", icon: Brain },
+    { key: "su-nghiep", label: "Sự nghiệp", icon: Briefcase },
+    { key: "tai-loc", label: "Tài lộc", icon: Coins },
+    { key: "hon-nhan", label: "Hôn nhân & Tình duyên", icon: Heart },
+    { key: "suc-khoe", label: "Sức khỏe", icon: HeartPulse },
+  ];
+
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+      {/* Action Buttons */}
+      <div className="flex flex-wrap gap-3 justify-end">
+        <Button variant="outline" size="sm" className="gap-2 glass border-white/10 text-sm">
+          <Download className="w-4 h-4" /> Tải PDF
+        </Button>
+        <Button variant="outline" size="sm" className="gap-2 glass border-white/10 text-sm">
+          <Share2 className="w-4 h-4" /> Chia sẻ
+        </Button>
+      </div>
+
+      {/* Loading state */}
+      {isLoading && !completion && (
+        <Card className="glass-card noise-overlay">
+          <CardContent className="p-6 sm:p-8">
+            <div className="flex items-center gap-3 text-muted-foreground mb-6">
+              <Sparkles className="w-5 h-5 text-primary animate-spin" />
+              <span className="text-sm font-medium animate-pulse">AI đang phân tích và viết luận giải... (1-2 phút)</span>
+            </div>
+            <ShimmerSkeleton />
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Full Content - Accordion */}
+      {(!isLoading || completion) && (
+        <div className="space-y-3">
+          {sections.map((section) => {
+            const isOpen = expandedSection === section.key;
+            const Icon = section.icon;
+
+            return (
+              <div key={section.key} className="glass-card overflow-hidden">
+                <button
+                  onClick={() => setExpandedSection(isOpen ? null : section.key)}
+                  className="w-full flex items-center justify-between p-4 sm:p-5 hover:bg-white/[0.02] transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-primary/[0.08] flex items-center justify-center">
+                      <Icon className="w-4 h-4 text-primary" />
+                    </div>
+                    <span className="font-medium text-sm sm:text-base">{section.label}</span>
+                  </div>
+                  <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
+                </button>
+
+                <AnimatePresence>
+                  {isOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-4 sm:px-5 pb-5 pt-1 border-t border-white/[0.04]">
+                        <div className="prose-bazi">
+                          {completion || `Nội dung phân tích ${section.label} sẽ được hiển thị ở đây sau khi AI hoàn thành luận giải...`}
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            );
+          })}
         </div>
       )}
 
-      {showSummary && !hasPaid && (
-        <motion.div 
-          initial={{ opacity: 0, height: 0 }} 
-          animate={{ opacity: 1, height: "auto" }} 
-          className="space-y-6"
-        >
-          <Card className="glass-card border-primary/20">
-            <CardHeader>
-              <CardTitle className="text-primary flex items-center gap-2">
-                <Sparkles className="w-5 h-5" /> Tổng Quan Lá Số
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {isLoading && !completion ? (
-                <div className="space-y-3 animate-pulse">
-                  <div className="h-4 bg-white/10 rounded w-3/4"></div>
-                  <div className="h-4 bg-white/10 rounded w-full"></div>
-                  <div className="h-4 bg-white/10 rounded w-5/6"></div>
-                </div>
-              ) : (
-                <div className="prose prose-invert prose-p:leading-relaxed max-w-none">
-                  {completion || "Nhật chủ sinh không đắc lệnh, được một vài cát thần hỗ trợ nhưng toàn cục vẫn thiên về nhược. Dụng thần cần dùng Ấn tinh (Thủy) để sinh trợ. Hiện tại đang trong vận thiên về hỏa, cẩn trọng hao tài tốn của. Cụ thể chi tiết xin xem bản đầy đủ."}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+      {/* Rating */}
+      <div className="glass-card p-5 sm:p-6 text-center space-y-3 noise-overlay">
+        <p className="text-sm text-muted-foreground">Bạn đánh giá bài luận giải này thế nào?</p>
+        <div className="flex justify-center gap-1">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <button
+              key={star}
+              onClick={() => setRating(star)}
+              className="p-1 transition-all hover:scale-110"
+            >
+              <Star
+                className={`w-7 h-7 ${
+                  star <= rating
+                    ? "fill-primary text-primary"
+                    : "text-muted-foreground/30 hover:text-muted-foreground/50"
+                } transition-colors`}
+              />
+            </button>
+          ))}
+        </div>
+      </div>
 
-          {/* Paywall */}
-          <Card className="overflow-hidden border-0 bg-gradient-to-br from-secondary to-background shadow-2xl relative">
-            <div className="absolute top-0 right-0 p-32 bg-primary/10 blur-[100px] rounded-full pointer-events-none" />
-            
-            <div className="p-8 md:p-12 text-center space-y-6 relative z-10">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/20 text-primary mb-4">
-                <Lock className="w-8 h-8" />
-              </div>
-              <h3 className="text-2xl md:text-3xl font-bold">Mở Khóa Bản Luận Giải Chuyên Sâu</h3>
-              <p className="text-muted-foreground max-w-lg mx-auto">
-                Bản luận giải dài 5-7 trang A4 do AI cao cấp phân tích từng ngóc ngách của lá số, giúp bạn thấu hiểu thiên mệnh.
-              </p>
-              
-              <div className="grid sm:grid-cols-2 gap-4 max-w-2xl mx-auto text-left mt-8">
-                {[
-                  "Phân tích Dụng thần & Hỷ kỵ chi tiết",
-                  "Sự nghiệp & Tài lộc: Chọn nghề, thời điểm đầu tư",
-                  "Tình duyên & Hôn nhân: Thời điểm kết hôn, tính cách bạn đời",
-                  "Sức khỏe: Các lưu ý bệnh lý theo ngũ hành",
-                  "Dự báo cát hung 10 Đại vận (100 năm)",
-                  "Chi tiết lưu niên 3 năm kế tiếp"
-                ].map((feature, i) => (
-                  <div key={i} className="flex items-start gap-2">
-                    <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                    <span className="text-sm">{feature}</span>
-                  </div>
-                ))}
-              </div>
-
-              <div className="pt-8">
-                <div className="text-4xl font-bold text-foreground mb-4">
-                  99.000<span className="text-xl text-muted-foreground font-normal">đ</span>
-                </div>
-                <Button size="lg" className="h-14 px-12 text-lg font-bold bg-primary text-primary-foreground hover:bg-primary/90" onClick={handlePay}>
-                  Mở Khóa Ngay
-                </Button>
-                <p className="text-xs text-muted-foreground mt-4">Mua 1 lần, xem vĩnh viễn lá số này. Thanh toán tự động 24/7.</p>
-              </div>
-            </div>
-          </Card>
-        </motion.div>
-      )}
-
-      {hasPaid && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-          <div className="flex justify-end mb-4">
-             <Button variant="outline" className="border-primary/50 text-primary gap-2">
-               <Download className="w-4 h-4" /> Tải PDF Bản Luận Giải
-             </Button>
-          </div>
-          
-          <Card className="glass-card">
-            <CardHeader>
-              <CardTitle className="text-primary flex items-center gap-2">
-                <Sparkles className="w-5 h-5" /> Bình Giải Chi Tiết
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {isLoading && !completion ? (
-                 <div className="space-y-4">
-                    <div className="flex items-center gap-3 text-muted-foreground">
-                      <Sparkles className="w-4 h-4 animate-spin text-primary" /> 
-                      <span className="text-sm font-medium animate-pulse">AI đang phân tích và viết luận giải... (có thể mất 1-2 phút)</span>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="h-4 bg-white/5 rounded w-full animate-pulse"></div>
-                      <div className="h-4 bg-white/5 rounded w-5/6 animate-pulse"></div>
-                      <div className="h-4 bg-white/5 rounded w-4/6 animate-pulse"></div>
-                    </div>
-                 </div>
-              ) : (
-                <div className="prose prose-invert prose-primary max-w-none whitespace-pre-wrap">
-                  {completion || "Đây là nội dung bản luận giải chi tiết sau khi đã mở khóa. Hệ thống sẽ load từ AI chain..."}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </motion.div>
-      )}
-    </div>
+      {/* Disclaimer */}
+      <p className="text-xs text-muted-foreground/40 text-center leading-relaxed">
+        Mọi bình giải mang tính tham khảo, không thay thế tư vấn chuyên gia. Hệ thống không phán đoán tuyệt đối về sinh tử, bệnh tật, tai nạn.
+      </p>
+    </motion.div>
   );
 }

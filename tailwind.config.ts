@@ -18,6 +18,9 @@ const config = {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ["var(--font-sans)", "system-ui", "sans-serif"],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -52,6 +55,12 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // Ngũ hành
+        "el-wood": "hsl(var(--el-wood))",
+        "el-fire": "hsl(var(--el-fire))",
+        "el-earth": "hsl(var(--el-earth))",
+        "el-metal": "hsl(var(--el-metal))",
+        "el-water": "hsl(var(--el-water))",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -67,10 +76,25 @@ const config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        shimmer: {
+          "0%": { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition: "200% 0" },
+        },
+        "glow-pulse": {
+          "0%, 100%": { opacity: "0.6" },
+          "50%": { opacity: "1" },
+        },
+        float: {
+          "0%, 100%": { transform: "translateY(0px)" },
+          "50%": { transform: "translateY(-6px)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        shimmer: "shimmer 2s linear infinite",
+        "glow-pulse": "glow-pulse 3s ease-in-out infinite",
+        float: "float 4s ease-in-out infinite",
       },
     },
   },

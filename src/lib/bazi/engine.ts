@@ -45,7 +45,7 @@ export function buildChart(input: {
   );
 
   const lunarDate = exactSolar.getLunar();
-  const eightChar = exactSolar.getEightChar();
+  const eightChar = lunarDate.getEightChar();
   eightChar.setSect(input.zi_hour_sect);
 
   const getPillar = (type: 'year' | 'month' | 'day' | 'hour'): Pillar => {
